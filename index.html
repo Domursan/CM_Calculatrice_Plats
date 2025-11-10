@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculatrice d'Ingrédients</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2e2e2e;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #2e2e2e;
+            /*border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);*/
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(90deg, #9a2243 0%, #000000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: linear-gradient(135deg, #62162a 0%, #000000 100%);
+            border-radius: 25px;
+            border-color: #ffffff;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #9a2243;
+            padding-bottom: 10px;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .recipe-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid #9a2243;
+        }
+
+        .recipe-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .recipe-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-control button {
+            background: #b74162;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .quantity-control button:hover {
+            background: #9a2243;
+        }
+
+        .quantity-control input {
+            width: 60px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 12px;
+        }
+
+        .ingredients-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .ingredient-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .ingredient-item:hover {
+            transform: translateX(5px);
+        }
+
+        .ingredient-name {
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .ingredient-quantity {
+            background: #9a2243;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1em;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .ingredient-price {
+            background: #9a2243;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1em;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .total-item {
+            background: #b74162;
+            margin-top: 20px;
+            border: 3px solid #9a2243;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .total-item .ingredient-name {
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .ingredient-total-price {
+            background: #ffffff;
+            color: #9a2243;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1.4em;
+            min-width: 150px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn {
+            background: #880000;
+            color: #ffffff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #ff0000;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #b74162;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9a2243;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="section">
+                <div class="recipe-grid" id="recipeGrid"></div>
+                <button class="reset-btn" onclick="resetAll()">🔄 Réinitialiser tout 🔄</button>
+            </div>
+
+            <div class="section">
+                <h2>Ingrédients nécessaires</h2>
+                <div class="ingredients-list" id="ingredientsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Définition des recettes avec leurs ingrédients
+        const recipes = [
+            // Grands plats - Végétarien
+            { category: "Grands plats - Végétarien", name: "Symphonie de l'automne", ingredients: { "Orange": 0.2, "Pomme": 0.2, "Maïs": 0.1, "Pomme de terre": 0.2 }},
+            { category: "Grands plats - Végétarien", name: "Festin champêtre", ingredients: { "Maïs": 0.2, "Chou frais": 0.1, "Tomate": 0.2, "Citrouille": 0.1 }},
+            { category: "Grands plats - Végétarien", name: "Fête des légumes", ingredients: { "Maïs": 0.2, "Pomme de terre": 0.2, "Tomate": 0.2, "Citrouille": 0.1 }},
+            { category: "Grands plats - Végétarien", name: "Réunion potagère", ingredients: { "Maïs": 0.2, "Chou frais": 0.1, "Pomme de terre": 0.2 }},
+            
+            // Grands plats - Viande
+            { category: "Grands plats - Viande", name: "Symphonie de boeuf à la truffe", ingredients: { "Champignon": 0.3, "Langue": 0.1, "Abat": 0.1, "Rognon": 0.1, "Tripe": 0.1, "Mandatorien": 0.1 }},
+            { category: "Grands plats - Viande", name: "Côte d'agneau croquante", ingredients: { "Maïs": 0.5, "Chou frais": 0.2, "Pomme de terre": 0.5, "Tomate": 0.5, "Viande": 0.2, "Lait entier": 0.1 }},
+            { category: "Grands plats - Viande", name: "Filet de veau rosmarino", ingredients: { "Pomme de terre": 0.2, "Viande": 0.2, "Lait entier": 0.1 }},
+            { category: "Grands plats - Viande", name: "Magret épicé sichuan", ingredients: { "Pomme de terre": 0.2, "Viande": 0.2, "IndySpensable": 0.1 }},
+            
+            // Grands plats - Exotique
+            { category: "Grands plats - Exotique", name: "Tataki du bout du monde", ingredients: { "Citron": 0.1, "Pomme de terre": 0.2, "Viande": 0.2 }},
+            { category: "Grands plats - Exotique", name: "Tagine des sables", ingredients: { "Orange": 0.1, "Citron": 0.1, "Maïs": 0.5, "Chou frais": 0.2, "Pomme de terre": 0.5, "Tomate": 0.5, "Viande": 0.2 }},
+            { category: "Grands plats - Exotique", name: "Tikka royale", ingredients: { "Citron": 0.1, "Maïs": 0.5, "Chou frais": 0.2, "Pomme de terre": 0.5, "Tomate": 0.5, "Lait entier": 0.1, "Viande": 0.2 }},
+            { category: "Grands plats - Exotique", name: "Curry de chèvre tropical", ingredients: { "Citron": 0.1, "Pomme de terre": 0.1, "Tomate": 0.1, "Viande": 0.2 }},
+            
+            // Grands plats - Poisson
+            { category: "Grands plats - Poisson", name: "Saint-Jacques au maïs doré", ingredients: { "Bac à poissons et crustacés": 0.4, "Maïs": 0.2, "Lait entier": 0.1, "Lasbounou": 0.1 }},
+            { category: "Grands plats - Poisson", name: "Turbot des profondeurs", ingredients: { "Bac à poissons et crustacés": 0.4, "Citron": 0.1, "Chou frais": 0.1, "Tomate": 0.1 }},
+            { category: "Grands plats - Poisson", name: "Cabillaud à l'herbier", ingredients: { "Bac à poissons et crustacés": 0.4, "Maïs": 0.5, "Chou frais": 0.2, "Pomme de terre": 0.5, "Tomate": 0.5, "LaMano Blanc": 0.1 }},
+            { category: "Grands plats - Poisson", name: "Éveil de l'océan", ingredients: { "Bac à poissons et crustacés": 0.4, "Pomme": 0.1, "Lait entier": 0.1, "LaMano Blanc": 0.1 }},
+            
+            // Grands jus
+            { category: "Grands jus", name: "FruitForSub", ingredients: { "Cardinal": 0.5, "Muscat": 0.5, "Centennial": 0.5, "Chasselas": 0.5 }},
+            { category: "Grands jus", name: "Multifruit", ingredients: { "Orange": 0.2, "Pomme": 0.2, "Tomate": 0.2, "Citrouille": 0.1 }},
+            
+            // Petits extras
+            { category: "Petits extras", name: "Pomme", ingredients: { "Pomme": 1 }},
+            { category: "Petits extras", name: "Orange", ingredients: { "Orange": 1 }},
+            { category: "Petits extras", name: "Cardinal", ingredients: { "Cardinal": 1 }},
+            { category: "Petits extras", name: "Muscat", ingredients: { "Muscat": 1 }},
+            { category: "Petits extras", name: "Centennial", ingredients: { "Centennial": 1 }},
+            { category: "Petits extras", name: "Chasselas", ingredients: { "Chasselas": 1 }},
+            { category: "Petits extras", name: "Poveridou", ingredients: { "Lait écrémé": 1/3 }},
+            { category: "Petits extras", name: "Caprice du tchat", ingredients: { "Lait entier": 1/3 }},
+            { category: "Petits extras", name: "Zaroilles", ingredients: { "Lait demi-écrémé": 1/3 }},
+            { category: "Petits extras", name: "Moman-tum", ingredients: { "Lait demi-écrémé": 1/3 }},
+            { category: "Petits extras", name: "P'tit dashque", ingredients: { "Lait demi-écrémé": 1/3 }},
+            { category: "Petits extras", name: "Tchat qui rit", ingredients: { "Lait entier": 1/3 }},
+            { category: "Petits extras", name: "Cutmembert", ingredients: { "Lait entier": 1/3 }},
+            { category: "Petits extras", name: "CHEHdar", ingredients: { "Lait écrémé": 1/3 }},
+            { category: "Petits extras", name: "GorgonZera", ingredients: { "Lait écrémé": 1/3 }},
+            
+            // Grands extras
+            { category: "Grands extras", name: "Salade de fruits", ingredients: { "Pomme": 0.2, "Orange": 0.2 }},
+            { category: "Grands extras", name: "Cheesecake", ingredients: { "Citron": 0.2, "Lait entier": 0.2 }},
+            { category: "Grands extras", name: "Popcorn", ingredients: { "Maïs": 0.8 }},
+            { category: "Grands extras", name: "Sans-pareil", ingredients: { "Viande": 1, "Langue": 1, "Abat": 1, "Rognon": 1, "Tripe": 1 }},
+            { category: "Grands extras", name: "Solong", ingredients: { "Viande": 1, "Langue": 1, "Abat": 1, "Rognon": 1, "Tripe": 1 }},
+            { category: "Grands extras", name: "Lasbounou", ingredients: { "Viande": 1, "Langue": 1, "Abat": 1, "Rognon": 1, "Tripe": 1 }},
+            { category: "Grands extras", name: "Soziflard", ingredients: { "Viande": 1, "Langue": 1, "Abat": 1, "Rognon": 1, "Tripe": 1 }},
+            { category: "Grands extras", name: "Saucifion", ingredients: { "Viande": 1, "Langue": 1, "Abat": 1, "Rognon": 1, "Tripe": 1 }},
+            
+            // Petits jus
+            { category: "Petits jus", name: "Jus de pomme", ingredients: { "Pomme": 0.2 }},
+            { category: "Petits jus", name: "Choux Brouhaha", ingredients: { "Chou frais": 0.1 }},
+            { category: "Petits jus", name: "Bouteille de limonade", ingredients: { "Citron": 0.2 }},
+            { category: "Petits jus", name: "Jus d'orange", ingredients: { "Orange": 0.2 }},
+            { category: "Petits jus", name: "Potage à la citrouille", ingredients: { "Citrouille": 0.1 }},
+            { category: "Petits jus", name: "Jus de tomate", ingredients: { "Tomate": 0.2 }},
+            
+            // Moyens jus
+            { category: "Moyens jus", name: "Naples Gius", ingredients: { "Cardinal": 1 }},
+            { category: "Moyens jus", name: "Juskano", ingredients: { "Muscat": 1 }},
+            { category: "Moyens jus", name: "Oasclick", ingredients: { "Centennial": 1 }},
+            { category: "Moyens jus", name: "Tropicamak", ingredients: { "Chasselas": 1 }},
+            { category: "Moyens jus", name: "Tomachou fraicheur", ingredients: { "Chou frais": 0.1, "Tomate": 0.2 }},
+            { category: "Moyens jus", name: "Orangeade à la citrouille", ingredients: { "Orange": 0.2, "Citrouille": 0.1 }},
+            { category: "Moyens jus", name: "Smoothie fruité", ingredients: { "Orange": 0.2, "Pomme": 0.2 }},
+            { category: "Moyens jus", name: "Tomato-Tonic", ingredients: { "Pomme": 0.2, "Tomate": 0.1 }},
+            
+            // Vins
+            { category: "Vins", name: "Mandatorien", ingredients: { "Cardinal": 10 }},
+            { category: "Vins", name: "Cuve Saint-Monnay", ingredients: { "Muscat": 10 }},
+            { category: "Vins", name: "LaMano Blanc", ingredients: { "Centennial": 10 }},
+            { category: "Vins", name: "IndySpensable", ingredients: { "Chasselas": 10 }},
+            
+            // Moyens plats
+            { category: "Moyens plats", name: "Salade de choux", ingredients: { "Chou frais": 0.1 }},
+            { category: "Moyens plats", name: "Maïs à la crème", ingredients: { "Maïs": 0.2 }},
+            { category: "Moyens plats", name: "Pommes de terres sautées", ingredients: { "Pomme de terre": 0.2 }},
+            { category: "Moyens plats", name: "Tomate farcie", ingredients: { "Tomate": 0.2 }},
+            { category: "Moyens plats", name: "Danse végétarienne", ingredients: { "Maïs": 0.2, "Pomme de terre": 0.2 }},
+            
+            // Pack de préparation
+            { category: "Pack de préparation", name: "Végétarien x 1'000", ingredients: {"Orange": 200, "Pomme": 200, "Maïs": 700, "Pomme de terre": 600, "Chou frais": 300, "Tomate": 400, "Citrouille": 200}},
+            { category: "Pack de préparation", name: "Multifruits x 1'000", ingredients: {"Orange": 200, "Pomme": 200, "Tomate": 200, "Citrouille": 100}},
+            { category: "Pack de préparation", name: "Multifruits x 2'000", ingredients: {"Orange": 400, "Pomme": 400, "Tomate": 400, "Citrouille": 200}},
+            { category: "Pack de préparation", name: "Poisson x 600", ingredients: {"Bac à poissons et crustacés": 960, "Pomme": 60, "Citron": 60, "Maïs": 420, "Chou frais": 180, "Pomme de terre": 300, "Tomate": 360, "Lait entier": 120, "LaMano Blanc": 120, "Lasbounou": 60}},
+            { category: "Pack de préparation", name: "Poisson x 800", ingredients: {"Bac à poissons et crustacés": 1280, "Pomme": 80, "Citron": 80, "Maïs": 560, "Chou frais": 240, "Pomme de terre": 400, "Tomate": 480, "Lait entier": 160, "LaMano Blanc": 160, "Lasbounou": 80}}
+        ];
+
+        // Liste de tous les ingrédients uniques
+        const allIngredients = [
+            "Orange", "Pomme", "Maïs", "Pomme de terre", "Chou frais", "Tomate", "Citrouille",
+            "Champignon", "Langue", "Abat", "Rognon", "Tripe", "Viande", "Lait entier",
+            "Bac à poissons et crustacés", "Citron", "Cardinal", "Muscat", "Centennial", "Chasselas",
+            "Lait écrémé", "Lait demi-écrémé", "Mandatorien", "LaMano Blanc", "IndySpensable", "Lasbounou"
+        ];
+
+        // Prix des ingrédients
+        const ingredientPrices = {
+            "Cardinal": 0.00,
+            "Muscat": 0.00,
+            "Chasselas": 0.00,
+            "Centennial": 0.00,
+            "Bac à poissons et crustacés": 0.00,
+            "Champignon": 0.00,
+            "Maïs": 15.00,
+            "Chou frais": 15.00,
+            "Pomme de terre": 15.00,
+            "Citrouille": 15.00,
+            "Tomate": 15.00,
+            "Orange": 15.00,
+            "Pomme": 15.00,
+            "Citron": 15.00,
+            "Langue": 0.00,
+            "Abat": 0.00,
+            "Rognon": 0.00,
+            "Tripe": 0.00,
+            "Viande": 0.00,
+            "Lait écrémé": 10.00,
+            "Lait demi-écrémé": 10.00,
+            "Lait entier": 10.00,
+            "LaMano Blanc": 0.00,
+            "Mandatorien": 0.00,
+            "IndySpensable": 0.00,
+            "Bière Zibwasser": 0.00,
+            "Lasbounou": 0.00
+        };
+
+        // Stocker les quantités sélectionnées
+        let recipeQuantities = {};
+
+        // Initialiser
+        function init() {
+            renderRecipes();
+            renderIngredients();
+        }
+
+        // Afficher les recettes
+        function renderRecipes() {
+            const grid = document.getElementById('recipeGrid');
+            grid.innerHTML = '';
+
+            let currentCategory = '';
+            recipes.forEach((recipe, index) => {
+                // Ajouter un séparateur de catégorie si nouvelle catégorie
+                if (recipe.category !== currentCategory) {
+                    currentCategory = recipe.category;
+                    const categoryHeader = document.createElement('div');
+                    categoryHeader.style.cssText = `
+                        grid-column: 1 / -1;
+                        font-weight: 700;
+                        color: #ffffff;
+                        font-size: 1.1em;
+                        margin-top: ${index === 0 ? '0' : '15px'};
+                        margin-bottom: 10px;
+                        padding-bottom: 5px;
+                        border-bottom: 2px solid #9a2243;
+                    `;
+                    categoryHeader.textContent = currentCategory;
+                    grid.appendChild(categoryHeader);
+                }
+
+                const quantity = recipeQuantities[index] || 0;
+                
+                const item = document.createElement('div');
+                item.className = 'recipe-item';
+                item.innerHTML = `
+                    <div class="recipe-name">${recipe.name}</div>
+                    <div class="quantity-control">
+                        <button onclick="changeQuantity(${index}, -1)">−</button>
+                        <input type="number" 
+                               value="${quantity}" 
+                               min="0" 
+                               onchange="setQuantity(${index}, this.value)"
+                               onclick="this.select()">
+                        <button onclick="changeQuantity(${index}, 1)">+</button>
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        // Changer la quantité d'une recette
+        function changeQuantity(index, delta) {
+            const current = recipeQuantities[index] || 0;
+            const newValue = Math.max(0, current + delta);
+            recipeQuantities[index] = newValue;
+            renderRecipes();
+            updateIngredients();
+        }
+
+        // Définir directement la quantité
+        function setQuantity(index, value) {
+            const numValue = Math.max(0, parseInt(value) || 0);
+            recipeQuantities[index] = numValue;
+            updateIngredients();
+        }
+
+        // Calculer et afficher les ingrédients
+        function updateIngredients() {
+            const totals = {};
+
+            // Calculer les totaux
+            recipes.forEach((recipe, index) => {
+                const quantity = recipeQuantities[index] || 0;
+                if (quantity > 0) {
+                    Object.entries(recipe.ingredients).forEach(([ingredient, amount]) => {
+                        totals[ingredient] = (totals[ingredient] || 0) + (amount * quantity);
+                    });
+                }
+            });
+
+            renderIngredients(totals);
+        }
+
+        // Afficher les ingrédients
+        function renderIngredients(totals = {}) {
+            const list = document.getElementById('ingredientsList');
+            list.innerHTML = '';
+
+            // Créer une liste triée des ingrédients avec leurs quantités
+            const sortedIngredients = Object.entries(totals)
+                .sort((a, b) => a[0].localeCompare(b[0]));
+
+            if (sortedIngredients.length === 0) {
+                list.innerHTML = '<div class="ingredient-item" style="justify-content: center; color: #000;">Sélectionnez des recettes pour voir les ingrédients nécessaires</div>';
+                return;
+            }
+
+            let totalPrice = 0;
+
+            sortedIngredients.forEach(([ingredient, quantity]) => {
+                const item = document.createElement('div');
+                item.className = 'ingredient-item';
+                
+                // Formater la quantité avec précision appropriée
+                let displayQuantity;
+                if (quantity >= 10) {
+                    displayQuantity = Math.round(quantity * 10) / 10; // 1 décimale pour grandes quantités
+                } else if (quantity >= 1) {
+                    displayQuantity = Math.round(quantity * 100) / 100; // 2 décimales
+                } else {
+                    displayQuantity = Math.round(quantity * 1000) / 1000; // 3 décimales pour petites quantités
+                }
+
+                // Calculer le prix
+                const price = ingredientPrices[ingredient] || 0;
+                const itemPrice = quantity * price;
+                totalPrice += itemPrice;
+                
+                item.innerHTML = `
+                    <div class="ingredient-name">${ingredient}</div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div class="ingredient-quantity">${displayQuantity}</div>
+                        <div class="ingredient-price">${itemPrice.toFixed(2)} $</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            // Ajouter le total général
+            const totalItem = document.createElement('div');
+            totalItem.className = 'ingredient-item total-item';
+            totalItem.innerHTML = `
+                <div class="ingredient-name" style="font-size: 1.2em;">TOTAL</div>
+                <div class="ingredient-total-price">${totalPrice.toFixed(2)} $</div>
+            `;
+            list.appendChild(totalItem);
+        }
+
+        // Réinitialiser tout
+        function resetAll() {
+            recipeQuantities = {};
+            renderRecipes();
+            renderIngredients();
+        }
+
+        // Initialiser au chargement
+        init();
+    </script>
+</body>
+</html>
