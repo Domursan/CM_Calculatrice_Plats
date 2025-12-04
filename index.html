@@ -52,12 +52,12 @@
         }
 
         .section {
-            background: linear-gradient(135deg, #62162a 0%, #000000 100%);
-            border-radius: 25px;
+            background: transparent; /*linear-gradient(135deg, #62162a 0%, #000000 100%)*/
+            border-radius: 50px;
             border-color: #ffffff;
             width: 100%;
             padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
         }
 
         .section h2 {
@@ -79,7 +79,7 @@
         }
 
         .recipe-item {
-            background: white;
+            background: linear-gradient(135deg, #9a2243 0%, #cc345c 100%);
             border-radius: 10px;
             padding: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -94,7 +94,7 @@
 
         .recipe-name {
             font-weight: 600;
-            color: #333;
+            color: #ffffff;
             margin-bottom: 10px;
             font-size: 0.95em;
         }
@@ -108,7 +108,8 @@
         .quantity-control button {
             background: #b74162;
             color: white;
-            border: none;
+            border: #ffffff;
+            border-width: 50px;
             width: 24px;
             height: 24px;
             border-radius: 50%;
@@ -127,7 +128,7 @@
         .quantity-control input {
             width: 60px;
             text-align: center;
-            border: 2px solid #ddd;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             padding: 5px;
             font-size: 12px;
@@ -140,7 +141,7 @@
         }
 
         .ingredient-item {
-            background: white;
+            background: rgba(154, 34, 67, 0.80);
             border-radius: 10px;
             padding: 15px 20px;
             margin-bottom: 12px;
@@ -157,7 +158,7 @@
 
         .ingredient-name {
             font-weight: 600;
-            color: #333;
+            color: #ffffff;
             flex: 1;
         }
 
@@ -186,7 +187,7 @@
         .total-item {
             background: #b74162;
             margin-top: 20px;
-            border: 3px solid #9a2243;
+            border: 3px solid #ffffff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
@@ -490,21 +491,20 @@
         }
 
         table {
-            --gap-x: 5px;             /* espace horizontal entre colonnes ET sur les bords */
-            --gap-y: 5px;              /* espace vertical entre lignes */
+            --gap-x: 5px;
+            --gap-y: 5px;
             width: 100%;
             border-collapse: separate;
             border-spacing: var(--gap-x) var(--gap-y);
-            table-layout: fixed;       /* fixe le calcul des largeurs */
+            table-layout: fixed;
         }
 
         table td {
-            /* 2 colonnes => 3 espacements horizontaux (gauche, milieu, droite) */
             width: calc((100% - 3 * var(--gap-x)) / 2);
             border: 1px none;
             padding: 5px 5px;
             text-align: left;
-            overflow-wrap: anywhere;    /* évite que du texte long casse tout */
+            overflow-wrap: anywhere;
         }
         .close-btn{
             flex:0 0 auto;
